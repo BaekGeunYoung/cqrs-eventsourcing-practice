@@ -14,9 +14,6 @@ import com.geunyoung.cqrseventsourcingpractice.event.account.AccountHeldEvent
 import com.geunyoung.cqrseventsourcingpractice.event.account.MoneyDebitedEvent
 import com.geunyoung.cqrseventsourcingpractice.command.account.DebitMoneyCommand
 
-
-
-
 @Aggregate
 class AccountAggregate {
     @AggregateIdentifier
@@ -28,8 +25,11 @@ class AccountAggregate {
 
     var status: String = ""
 
+    constructor()
+
     @CommandHandler
-    fun on(createAccountCommand: CreateAccountCommand) {
+    constructor(createAccountCommand: CreateAccountCommand) {
+        this.id = createAccountCommand.id
         AggregateLifecycle.apply(AccountCreatedEvent(createAccountCommand.id, createAccountCommand.accountBalance, createAccountCommand.currency))
     }
 
