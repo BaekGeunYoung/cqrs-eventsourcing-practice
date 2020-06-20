@@ -20,4 +20,6 @@ data class AccountQueryEntity(
                 ", status='" + status + '\''.toString() +
                 '}'.toString()
     }
+
+    constructor(): this(null, 0.0, "", "")
 }
