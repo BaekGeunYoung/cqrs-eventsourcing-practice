@@ -1,4 +1,4 @@
-package com.geunyoung.cqrseventsourcingpractice.aggregate
+package com.geunyoung.cqrseventsourcingpractice.domain.aggregate
 
 import com.geunyoung.cqrseventsourcingpractice.command.account.CreateAccountCommand
 import com.geunyoung.cqrseventsourcingpractice.command.account.CreditMoneyCommand

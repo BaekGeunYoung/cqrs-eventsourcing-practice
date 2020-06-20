@@ -1,4 +1,4 @@
-package com.geunyoung.cqrseventsourcingpractice.entity
+package com.geunyoung.cqrseventsourcingpractice.domain.entity
 
 import javax.persistence.Entity
 import javax.persistence.Id

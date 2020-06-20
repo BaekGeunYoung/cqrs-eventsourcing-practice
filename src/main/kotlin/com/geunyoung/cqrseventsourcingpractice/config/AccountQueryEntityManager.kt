@@ -1,4 +1,4 @@
-package com.geunyoung.cqrseventsourcingpractice.entity_manager
+package com.geunyoung.cqrseventsourcingpractice.config
 
 import com.geunyoung.cqrseventsourcingpractice.repository.AccountRepository
 import org.springframework.beans.factory.annotation.Autowired
