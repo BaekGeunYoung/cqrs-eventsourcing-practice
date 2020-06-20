@@ -4,5 +4,5 @@ import org.axonframework.modelling.command.TargetAggregateIdentifier
 
 open class BaseCommand<T> (
         @TargetAggregateIdentifier
-        var id: T
+        open val id: T
 )
