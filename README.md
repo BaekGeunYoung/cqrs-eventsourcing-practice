@@ -145,3 +145,81 @@ event sourcing은 도메인 객체가 아닌 도메인 객체에 가해지는 �
 ```
 
 이렇게 하는 방식의 단점은 query를 위한 데이터를 따로 저장해두기 때문에 앞서 말한 기존 방식의 동시성 문제에 똑같이 노출되어있다는 점이다. 또한 event를 저장함과 동시에 query를 업데이트하는 작업도 하기 때문에 disk I/O 작업이 많아져 성능 저하의 우려가 있다.
+
+query 요청을 효율적으로 수행하기 위해 어떤 방식이 주로 사용되는지에 대해서 조금 더 알아봐야 할 것 같다.
+
+## 테스트
+
+이번 실습에서는 swagger를 사용해 간단하게 테스트를 진행해보았다.
+
+### 이벤트 저장
+
+domain event는 axon framework에 의해 생성된 domain_event_entry라는 테이블에 담기게 된다. 아래와 같은 일련의 command request를 보낸 후 해당 테이블에 저장된 내용을 확인해보았다.
+
+1. credit이 20$인 account를 생성
+2. 해당 account에 30$를 credit
+3. 해당 account에 40$를 debit
+4. 해당 account에 20$를 debit
+
+![h2console](./images/h2console.png)
+
+의도한 대로 해당 aggregate instance에 대해 발생한 event들이 잘 저장된 것을 확인할 수 있다. 참고로, 해당 테이블은 aggregate_identifier와 sequence_number 조합에 대해 unique contstraint가 설정되어 있다.
+
+### query 조회
+
+CQRS 패턴의 query 부분에서 제공해야 하는 정보는 어떤 aggregate에 대한 event의 목록과, 어떤 aggregate의 최종적인 현재 상태이다. 이 두 정보를 잘 보내주는지 테스트해보았다.
+
+#### 1. event list
+```
+curl -X GET "http://localhost:8080/bank-accounts/52f55d01-ab19-4045-ace7-cb95f0925b65/events" -H "accept: */*"
+
+[
+  {
+    "id": "52f55d01-ab19-4045-ace7-cb95f0925b65",
+    "accountBalance": 20,
+    "currency": "USD"
+  },
+  {
+    "id": "52f55d01-ab19-4045-ace7-cb95f0925b65",
+    "status": "ACTIVATED"
+  },
+  {
+    "id": "52f55d01-ab19-4045-ace7-cb95f0925b65",
+    "creditAmount": 30,
+    "currency": "USD"
+  },
+  {
+    "id": "52f55d01-ab19-4045-ace7-cb95f0925b65",
+    "debitAmount": 40,
+    "currency": "USD"
+  },
+  {
+    "id": "52f55d01-ab19-4045-ace7-cb95f0925b65",
+    "debitAmount": 20,
+    "currency": "USD"
+  },
+  {
+    "id": "52f55d01-ab19-4045-ace7-cb95f0925b65",
+    "status": "HOLD"
+  }
+]
+```
+
+#### 2. domain data
+
+```
+curl -X GET "http://localhost:8080/bank-accounts/52f55d01-ab19-4045-ace7-cb95f0925b65" -H "accept: */*"
+
+{
+  "id": "52f55d01-ab19-4045-ace7-cb95f0925b65",
+  "accountBalance": -10,
+  "currency": "USD",
+  "status": "HOLD"
+}
+```
+
+음.. 잘되는군
+
+## 정리
+
+axon과 spring boot를 이용해 CQRS 및 이벤트 소싱 패턴을 학습해보았다. 해당 패턴들은 MSA 구조에서 활용될 때 더 큰 시너지를 내는 것으로 알고 있다. 다음 실습 때는 MSA 구조 하에서 SAGA pattern을 이용해 분산 트랜잭션을 구현해보는 방법을 학습해볼 것이다.
