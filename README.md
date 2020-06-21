@@ -16,6 +16,8 @@
 
 axon framework는 DDD 패러다임 하에서 event sourcing과 CQRS 패턴을 이용해 애플리케이션을 작성할 수 있도록 도와주는 framework이다. 이번 실습에서는 axon framework과 spring boot를 사용해 cqrs 및 event sourcing 방식의 application을 만들어보려고 한다.
 
+이번에 진행한 실습은 [여기](https://medium.com/@berkaybasoz/event-sourcing-and-cqrs-with-axon-and-spring-boot-part-1-6d1c1d4d054e) 에 소개된 방식을 따라 진행했다.
+
 ## package structure
 
 패키지 구조는 아래와 같다.
